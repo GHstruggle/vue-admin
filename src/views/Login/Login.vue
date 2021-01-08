@@ -25,18 +25,29 @@
           <el-row :gutter="10">
             <el-col :span="15">
               <div class="grid-content bg-purple">
-                <el-input v-model.number="ruleForm.code"></el-input>
+                <el-input v-model="ruleForm.code"></el-input>
               </div>
             </el-col>
             <el-col :span="9">
               <div class="grid-content bg-purple">
-                <el-button type="primary" minlength="6" maxlength="6" class="block">验证码</el-button>
+                <el-button
+                  type="primary"
+                  minlength="6"
+                  maxlength="6"
+                  @click="getSms"
+                  :disabled="codeBtnStatus.staus"
+                  class="block"
+                >
+                  {{ codeBtnStatus.text }}
+                </el-button>
               </div>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item class="margin-top">
-          <el-button type="danger" class="block" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button type="danger" class="block" @click="submitForm('ruleForm')">
+            {{ menuTab[1].current ? '注册' : '登录' }}
+          </el-button>
         </el-form-item>
       </el-form>
       <!-- 表单 end -->
@@ -44,33 +55,14 @@
   </div>
 </template>
 <script>
-import { reactive } from '@vue/composition-api';
+import { reactive, onMounted, ref } from '@vue/composition-api';
 import { validateUserEmail, validatePassWord, validatePassWords, checkCode } from '@/views/Login/login.js';
+import { getCode, register, login } from '@/api/login.js';
+import { validate_userEmail } from '@/utils/validate.js';
+import { setInterval, clearInterval } from 'timers';
 export default {
   name: 'login',
   setup(props, context) {
-    // 邮箱验证
-    // let validateUserEmail = (rule, value, callback) => {
-    //   if (value === '') { callback(new Error('用户名不能为空')); }
-    //   validate_userEmail(value) ? callback(new Error('用户名格式不正确')) : callback();
-    // };
-    // // 密码验证
-    // let validatePassWord = (rule, value, callback) => {
-    //   if (value === '') { callback(new Error('密码不能为空')); }
-    //   validate_passWord(value) ? callback(new Error('密码格式错误')) : callback();
-    // };
-    // // 确认密码
-    // let validatePassWords = (rule, value, callback) => {
-    //   if (value === '') { callback(new Error('密码不能为空')); }
-    //   ruleForm.passWord == value ? callback() : callback(new Error('两次密码不一致'));
-    // };
-    // // 验证码
-    // let checkCode = (rule, value, callback) => {
-    //   if (!value) {
-    //     return callback(new Error('验证码不能为空'));
-    //   }
-    //   callback();
-    // };
     const menuTab = reactive([
       { text: '登录', current: true },
       { text: '注册', current: false }
@@ -79,6 +71,14 @@ export default {
     const toggleMenu = data => {
       menuTab.forEach(item => (item.current = false));
       data.current = true;
+      // 清空表单
+      clearFormData();
+      // 清除倒计时
+      clearCountDown();
+    };
+    // 清空表单数据
+    const clearFormData = () => {
+      context.refs.ruleForm.resetFields();
     };
     // 表单数据
     const ruleForm = reactive({
@@ -96,31 +96,115 @@ export default {
     });
     // 表单的提交处理
     const submitForm = formName => {
+      // 请求所需参数
+      const requestData = reactive({
+        username: ruleForm.userEmail,
+        password: ruleForm.passWord,
+        code: ruleForm.code
+      });
       context.refs[formName].validate(valid => {
         if (valid) {
-          alert('submit!');
+          // 判断是注册还是登录
+          menuTab[0].current ? submitLogin(requestData) : submitRegister(requestData);
           // 清空表单
-          context.refs[formName].resetFields();
+          clearFormData();
         } else {
           console.log('error submit!!');
           return false;
         }
       });
-      // 重置表单
-      // let resetForm = (formName) => {
-      //   // 清空表单
-      //   context.refs[formName].resetFields();
-      // }
     };
+    // 登录方法
+    const submitLogin = data => {
+      login(data)
+        .then(res => console.log(res))
+        .catch(error => error);
+    };
+    // 注册方法
+    const submitRegister = data => {
+      register(data)
+        .then(res => console.log(res))
+        .catch(error => error);
+    };
+    // 验证码按钮状态
+    const codeBtnStatus = reactive({
+      staus: false,
+      text: '发送验证码'
+    });
+    // 更新验证码按钮状态方法
+    const updataCodeBtnStatus = params => {
+      codeBtnStatus.staus = params.staus;
+      codeBtnStatus.text = params.text;
+    };
+    // 定时器 ID
+    const setIntervalID = ref(null);
+    // 发请求获取验证码
+    const getSms = () => {
+      // 先验证邮箱格式
+      if (ruleForm.userEmail == '') {
+        context.root.$message.error('邮箱不能为空！');
+        return false;
+      }
+      if (validate_userEmail(ruleForm.userEmail)) {
+        context.root.$message.error('邮箱格式不正确！');
+        return false;
+      }
+      updataCodeBtnStatus({
+        staus: true,
+        text: '发送中'
+      });
+      // 请求携带数据
+      const requestData = reactive({
+        username: ruleForm.userEmail,
+        module: menuTab[0].current ? 'login' : 'register'
+      });
+      console.log(requestData.module);
+      getCode(requestData)
+        .then(res => {
+          // 开启定时器
+          countDown(60);
+          console.log(res);
+        }) // 错误处理
+        .catch(error => error);
+    };
+    // 定时器
+    const countDown = number => {
+      setIntervalID.value = setInterval(() => {
+        number--;
+        if (number === 0) {
+          // 清除定时器
+          clearInterval(setIntervalID.value);
+          // 并修改验证码按钮状态
+          updataCodeBtnStatus({
+            tatus: false,
+            text: '再次获取'
+          });
+        } else {
+          codeBtnStatus.text = `倒计时${number}秒`;
+        }
+      }, 1000);
+    };
+    // 登录注册之间切换清除定时器
+    const clearCountDown = () => {
+      updataCodeBtnStatus({
+        tatus: false,
+        text: '发送验证码'
+      });
+      // 清除定时器
+      clearInterval(setIntervalID.value);
+    };
+    // 生命周期
+    onMounted(() => {});
     return {
       menuTab,
       ruleForm,
       rules,
       submitForm,
-      toggleMenu
+      toggleMenu,
+      getSms,
+      codeBtnStatus
     };
-  },
-  methods: {}
+  }
 };
 </script>
 <style lang="scss" scoped>

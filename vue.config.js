@@ -1,9 +1,9 @@
-const path = require("path");
+const path = require('path');
 module.exports = {
   // 基本路径
-  publicPath: process.env.NODE_ENV === "production" ? "" : "/",
+  publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
   // 输出文件目录
-  outputDir: process.env.NODE_ENV === "production" ? "dist" : "devdist",
+  outputDir: process.env.NODE_ENV === 'production' ? 'dist' : 'devdist',
   // eslint-loader 是否在保存的时候检查
   lintOnSave: true,
   /**
@@ -13,15 +13,15 @@ module.exports = {
   configureWebpack: config => {
     config.resolve = {
       // 配置解析别名
-      extensions: [".js", ".json", ".vue", "scss"],
+      extensions: ['.js', '.json', '.vue', 'scss'],
       alias: {
-        "@": path.resolve(__dirname, "./src"),
-        public: path.resolve(__dirname, "./public"),
-        components: path.resolve(__dirname, "./src/components"),
-        common: path.resolve(__dirname, "./src/common"),
-        api: path.resolve(__dirname, "./src/api"),
-        views: path.resolve(__dirname, "./src/views"),
-        data: path.resolve(__dirname, "./src/data")
+        '@': path.resolve(__dirname, './src'),
+        public: path.resolve(__dirname, './public'),
+        components: path.resolve(__dirname, './src/components'),
+        common: path.resolve(__dirname, './src/common'),
+        api: path.resolve(__dirname, './src/api'),
+        views: path.resolve(__dirname, './src/views'),
+        data: path.resolve(__dirname, './src/data')
       }
     };
   },
@@ -37,7 +37,7 @@ module.exports = {
     loaderOptions: {
       // 如发现 css.modules 报错，请查看这里：http://www.web-jshtml.cn/#/detailed?id=12
       scss: {
-        prependData: `@import "./src/styles/main.scss";`
+        prependData: `@import './src/styles/main.scss';`
       }
     },
     // 启用 CSS modules for all css / pre-processor files.
@@ -45,7 +45,7 @@ module.exports = {
   },
   // use thread-loader for babel & TS in production build
   // enabled by default if the machine has more than 1 cores
-  parallel: require("os").cpus().length > 1,
+  parallel: require('os').cpus().length > 1,
   /**
    *  PWA 插件相关配置,see https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
    */
@@ -53,12 +53,22 @@ module.exports = {
   // webpack-dev-server 相关配置
   devServer: {
     open: false, // 编译完成是否打开网页
-    host: "0.0.0.0", // 指定使用地址，默认localhost,0.0.0.0代表可以被外界访问
+    host: '0.0.0.0', // 指定使用地址，默认localhost,0.0.0.0代表可以被外界访问
     port: 8080, // 访问端口
     https: false, // 编译失败时刷新页面
     hot: true, // 开启热加载
     hotOnly: false,
-    proxy: null, // 设置代理
+    proxy: {
+      // 设置代理
+      '/devAPI': {
+        //这个是全局的环境配置变量，单独建立的文件，以VUE_APP_开头的变量，每个文件中都可以访问，假设这里是http://www.sweeeper.com
+        target: process.env.VUE_APP_API_URL,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/devAPI': ''
+        }
+      }
+    },
     overlay: {
       // 全屏模式下是否显示脚本错误
       warnings: true,
