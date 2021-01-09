@@ -1,0 +1,15 @@
+/**
+  左侧导航选择高亮
+*/
+.el-submenu .el-menu-item {
+  font-size: 14px;
+  padding-left: 52px !important;
+}
+.el-menu {
+  .el-menu-item.is-active {
+    background-color: rgba(245, 108, 108, 0.2) !important;
+  }
+  .is-active.is-opened .el-submenu__title{
+    background-color: $mainColor !important;
+  }
+}

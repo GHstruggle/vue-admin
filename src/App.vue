@@ -10,7 +10,5 @@ export default {};
 <style lang="scss">
 #app {
   height: 100vh;
-  font-size: 14px;
-  background-color: #344a5f;
 }
 </style>

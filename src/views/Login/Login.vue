@@ -56,10 +56,11 @@
 </template>
 <script>
 import { reactive, onMounted, ref } from '@vue/composition-api';
-import { validateUserEmail, validatePassWord, validatePassWords, checkCode } from '@/views/Login/login.js';
+import { validateUserEmail, validatePassWord, validatePassWords, checkCode } from '@/views/Login/index.js';
 import { getCode, register, login } from '@/api/login.js';
 import { validate_userEmail } from '@/utils/validate.js';
 import { setInterval, clearInterval } from 'timers';
+import { encryption } from '@/utils/encryption.js';
 export default {
   name: 'login',
   setup(props, context) {
@@ -99,7 +100,7 @@ export default {
       // 请求所需参数
       const requestData = reactive({
         username: ruleForm.userEmail,
-        password: ruleForm.passWord,
+        password: encryption(ruleForm.passWord),
         code: ruleForm.code
       });
       context.refs[formName].validate(valid => {
@@ -117,13 +118,29 @@ export default {
     // 登录方法
     const submitLogin = data => {
       login(data)
-        .then(res => console.log(res))
+        .then(res => {
+          context.root.$message({
+            message: res.message,
+            type: 'success'
+          });
+          // 登录成功跳转主页
+          context.root.$router.push('home');
+        })
         .catch(error => error);
     };
     // 注册方法
     const submitRegister = data => {
       register(data)
-        .then(res => console.log(res))
+        .then(res => {
+          context.root.$message({
+            message: res.message,
+            type: 'success'
+          });
+          // 注册成功切换登录页
+          toggleMenu(menuTab[0]);
+          // 清除计数
+          clearCountDown();
+        })
         .catch(error => error);
     };
     // 验证码按钮状态
@@ -162,13 +179,18 @@ export default {
       getCode(requestData)
         .then(res => {
           // 开启定时器
-          countDown(60);
+          countDown(10);
           console.log(res);
+          context.root.$message({
+            message: res.message,
+            type: 'success'
+          });
         }) // 错误处理
         .catch(error => error);
     };
     // 定时器
     const countDown = number => {
+      setIntervalID.value && clearInterval(setIntervalID.value);
       setIntervalID.value = setInterval(() => {
         number--;
         if (number === 0) {
