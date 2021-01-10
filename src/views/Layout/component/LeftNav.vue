@@ -1,7 +1,8 @@
 <template>
   <div id="nav-wrap">
+    <h1 class="logo"><img src="../../../assets/logo.png" /></h1>
     <el-menu
-      default-active="2"
+      :default-active="$route.path"
       class="el-menu-vertical-demo"
       @open="handleOpen"
       @close="handleClose"
@@ -13,7 +14,7 @@
       <template v-for="(routeItemi, index) in routers">
         <el-submenu :index="index + ''" v-if="!routeItemi.hide" :key="routeItemi.id">
           <template slot="title">
-            <i class="el-icon-location"></i>
+            <svg-icon :iconClass="routeItemi.mate.icon" :className="routeItemi.mate.icon" />
             <span>{{ routeItemi.mate.name }}</span>
           </template>
           <el-menu-item :index="subItem.path" v-for="subItem in routeItemi.children" :key="subItem.id">
@@ -56,5 +57,13 @@ export default {
   width: $navMenu;
   height: 100vh;
   background-color: #344a5f;
+  .svg-icon {
+    font-size: 16px;
+    margin: 0 10px;
+  }
+  .logo {
+    padding: 24px 0;
+    text-align: center;
+  }
 }
 </style>

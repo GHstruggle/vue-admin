@@ -1,3 +1,10 @@
 @import './normalize.scss';
 @import './common.scss';
 @import './elementui.scss';
+
+.pull-left {
+  float: left;
+};
+.pull-right {
+  float: right
+}

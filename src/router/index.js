@@ -30,7 +30,8 @@ const routes = [
     path: '/home',
     name: 'home',
     mate: {
-      name: '控制台'
+      name: '控制台',
+      icon: 'console'
     },
     component: () => import('../views/Home/Home.vue')
   },
@@ -41,7 +42,8 @@ const routes = [
     path: '/info',
     name: 'info',
     mate: {
-      name: '信息管理'
+      name: '信息管理',
+      icon: 'info'
     },
     component: () => import('../views/Home/Home.vue'),
     children: [
@@ -70,7 +72,8 @@ const routes = [
     path: '/userAdminister',
     name: 'userAdminister',
     mate: {
-      name: '用户管理'
+      name: '用户管理',
+      icon: 'user'
     },
     component: () => import('../views/Home/Home.vue'),
     children: [
