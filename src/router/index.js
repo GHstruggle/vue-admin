@@ -4,18 +4,19 @@ import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
 const routes = [
-  // {
-  //   path: '/',
-  //   redirect: 'login',
-  //   mate: {
-  //     name: '主页'
-  //   }
-  // },
+  {
+    path: '/',
+    redirect: 'login',
+    hide: true, // 过滤当前路由显示
+    mate: {
+      name: '主页'
+    }
+  },
   /**
    *  登录
    */
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     hide: true, // 过滤当前路由显示
     mate: {
@@ -27,13 +28,24 @@ const routes = [
    *  主页
    */
   {
-    path: '/home',
-    name: 'home',
+    path: '/console',
+    name: 'console',
     mate: {
       name: '控制台',
       icon: 'console'
     },
-    component: () => import('../views/Home/Home.vue')
+    component: () => import('../views/console/console.vue'),
+    redirect: '/home',
+    children: [
+      {
+        path: '/home',
+        name: 'home',
+        mate: {
+          name: '首页'
+        },
+        component: () => import('../views/console/Home.vue')
+      }
+    ]
   },
   /**
    * 信息管理
@@ -45,7 +57,7 @@ const routes = [
       name: '信息管理',
       icon: 'info'
     },
-    component: () => import('../views/Home/Home.vue'),
+    component: () => import('../views/console/console.vue'),
     children: [
       {
         path: '/infoList',
@@ -75,7 +87,7 @@ const routes = [
       name: '用户管理',
       icon: 'user'
     },
-    component: () => import('../views/Home/Home.vue'),
+    component: () => import('../views/console/console.vue'),
     children: [
       {
         path: '/administerList',

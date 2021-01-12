@@ -57,7 +57,7 @@
 <script>
 import { reactive, onMounted, ref } from '@vue/composition-api';
 import { validateUserEmail, validatePassWord, validatePassWords, checkCode } from '@/views/Login/index.js';
-import { getCode, register, login } from '@/api/login.js';
+import { getCode, register } from '@/api/login.js';
 import { validate_userEmail } from '@/utils/validate.js';
 import { setInterval, clearInterval } from 'timers';
 import { encryption } from '@/utils/encryption.js';
@@ -117,14 +117,15 @@ export default {
     };
     // 登录方法
     const submitLogin = data => {
-      login(data)
+      context.root.$store
+        .dispatch('login/userLogin', data)
         .then(res => {
           context.root.$message({
             message: res.message,
             type: 'success'
           });
           // 登录成功跳转主页
-          context.root.$router.push('home');
+          context.root.$router.push('console');
         })
         .catch(error => error);
     };

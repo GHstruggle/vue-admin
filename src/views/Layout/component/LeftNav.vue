@@ -4,11 +4,10 @@
     <el-menu
       :default-active="$route.path"
       class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
       background-color="transparent"
       text-color="#fff"
       active-text-color="#fff"
+      :collapse="isCollapse"
       router
     >
       <template v-for="(routeItemi, index) in routers">
@@ -26,7 +25,7 @@
   </div>
 </template>
 <script>
-import { reactive } from '@vue/composition-api';
+import { reactive, computed } from '@vue/composition-api';
 export default {
   setup(props, { root }) {
     /**
@@ -35,16 +34,13 @@ export default {
     // 所有路由数组
     const routers = reactive(root.$router.options.routes);
     // console.log(routers);
-    const handleOpen = (key, keyPath) => {
-      console.log(key, keyPath);
-    };
-    const handleClose = (key, keyPath) => {
-      console.log(key, keyPath);
-    };
+    /**
+     * 导航菜单是否收起
+     */
+    const isCollapse = computed(() => root.$store.state.meuns.isCollapse);
     return {
-      handleOpen,
-      handleClose,
-      routers
+      routers,
+      isCollapse
     };
   }
 };
@@ -64,6 +60,25 @@ export default {
   .logo {
     padding: 24px 0;
     text-align: center;
+  }
+}
+.close {
+  #nav-wrap {
+    width: $navMenuMin;
+    @include webkit(transition, all 0.3s ease 0s);
+  }
+  .logo > img {
+    width: $navMenuMin;
+    @include webkit(transition, all 0.3s ease 0s);
+  }
+}
+.open {
+  #nav-wrap {
+    width: $navMenu;
+    @include webkit(transition, all 0.3s ease 0s);
+  }
+  .logo > img {
+    @include webkit(transition, all 0.3s ease 0s);
   }
 }
 </style>

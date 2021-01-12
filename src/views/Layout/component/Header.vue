@@ -1,26 +1,50 @@
 <template>
   <div id="header-wrap">
     <div class="header-list pull-left">
-      <svg-icon iconClass="list" iconName="list"></svg-icon>
+      <i @click="menuStatus">
+        <svg-icon iconClass="list" iconName="list"></svg-icon>
+      </i>
     </div>
     <div class="pull-right">
       <div class="user-info pull-left">
         <img class="face" src="@/assets/touxiang.png" />
-        <span>管理员</span>
+        <span>{{ username }}</span>
       </div>
       <div class="exit-btn pull-left">
-        <i title="退出"><svg-icon iconClass="exit" iconName="exit"></svg-icon></i>
+        <i title="退出" @click="exit">
+          <svg-icon iconClass="exit" iconName="exit"></svg-icon>
+        </i>
       </div>
     </div>
   </div>
 </template>
 <script>
-export default {};
+import { computed, ref } from '@vue/composition-api';
+export default {
+  name: 'Header',
+  setup(props, { root }) {
+    const exit = () => {
+      let r = ref(confirm('确认退出吗？'));
+      if (r.value) {
+        root.$store.dispatch('login/exit').then(() => {
+          root.$router.push('login');
+        });
+      }
+    };
+    const menuStatus = () => root.$store.dispatch('meuns/menuStatus');
+    const username = computed(() => root.$store.state.login.user_name);
+    return {
+      menuStatus,
+      username,
+      exit
+    };
+  }
+};
 </script>
 <style lang="scss" scoped>
 #header-wrap {
   position: fixed;
-  left: 250px;
+  left: $navMenu;
   top: 0;
   right: 0;
   height: 75px;
@@ -47,6 +71,18 @@ export default {};
   .face {
     padding-right: 23px;
     vertical-align: middle;
+  }
+}
+.close {
+  #header-wrap {
+    left: $navMenuMin;
+    @include webkit(transition, all 0.3s ease 0s);
+  }
+}
+.open {
+  #header-wrap {
+    left: $navMenu;
+    @include webkit(transition, all 0.3s ease 0s);
   }
 }
 </style>

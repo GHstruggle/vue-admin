@@ -25,6 +25,18 @@ export default {
   height: 100%;
   padding: 30px 30px 0;
   background-color: #ffff;
-  box-sizing: border-box;
+  @include webkit(box-sizing, border-box);
+}
+.close {
+  #main-wrap {
+    padding-left: $navMenuMin + 30;
+    @include webkit(transition, all 0.3s ease 0s);
+  }
+}
+.open {
+  #header-wrap {
+    padding-left: ($navMenu + 30);
+    @include webkit(transition, all 0.3s ease 0s);
+  }
 }
 </style>
