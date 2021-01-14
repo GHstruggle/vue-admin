@@ -36,3 +36,27 @@
     }
   }
 }
+
+// 日期
+.el-date-editor--daterange.el-input__inner {
+  width: 100%;
+}
+
+// 表格多选
+ .el-table-column--selection .cell {
+  padding-left: 16px !important;
+}
+
+// 信息列表新增弹窗
+.el-dialog__body {
+  padding: 30px 45px !important;
+  padding-bottom: 20px !important;
+}
+.el-dialog__footer {
+    padding-top: 0 !important;
+    padding-bottom: 48px !important;
+    text-align: center;
+    .el-button {
+      width: 148px;
+    }
+}

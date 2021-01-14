@@ -12,3 +12,22 @@ $mainColor: #f56c6c;
   -webkit-#{$type}: $value; /* Safari 和 Chrome */
   -o-#{$type}: $value; /* Opera */
 }
+
+@mixin selectDom($width, $margin-left: $width, $align: "normal") {
+  label {
+    float: left;
+    width: $width + px;
+    line-height: 40px;
+    text-align: $align;
+  }
+  .select-content {
+    margin-left: $margin-left + px;
+  }
+}
+
+@for $i from 1 to 100 {
+  .margin-left-#{$i}
+  {
+    margin-left: $i + px;
+  }
+}
