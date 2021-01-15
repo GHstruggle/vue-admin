@@ -12,7 +12,8 @@ export function globalConfirm() {
         //   type: 'success',
         //   message: '删除成功!'
         // });
-        params.fn && params.fn(params.id);
+        let data = params.data || {};
+        params.fn && params.fn(data);
       })
       .catch(() => {
         // root.$message({

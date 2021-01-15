@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
+import { getToken, getUserName } from './cookies';
 const BASEURL = process.env.NODE_ENV == 'development' ? '/devAPI' : '';
 
 // 自定义配置新建一个 axios 实例
@@ -13,6 +14,8 @@ const server = axios.create({
 server.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
+    config.headers['Tokey'] = getToken();
+    config.headers['UserName'] = getUserName();
     return config;
   },
   function(error) {
