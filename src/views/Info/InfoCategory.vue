@@ -18,7 +18,14 @@
                   >
                     编辑
                   </el-button>
-                  <el-button type="success" size="mini" round>添加子类</el-button>
+                  <el-button
+                    type="success"
+                    size="mini"
+                    @click="add_SecondLevel_category({ categoryItem, type: 'add_SecondLevel_category' })"
+                    round
+                  >
+                    添加子类
+                  </el-button>
                   <el-button size="mini" @click="del_category(categoryItem.id)" round>删除</el-button>
                 </div>
               </h4>
@@ -42,7 +49,7 @@
                 <el-form-item label="一级分类">
                   <el-input :disabled="first_class_disabled" v-model="form_data.firstValue"></el-input>
                 </el-form-item>
-                <el-form-item label="二级分类" v-if="second_class_disabled">
+                <el-form-item label="二级分类" v-if="second_class_hide">
                   <el-input :disabled="second_class_disabled" v-model="form_data.secondValue"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -64,11 +71,14 @@
   </div>
 </template>
 <script>
-import { addFirstCategory, getInfoList, deleteCategory, editCategory } from '@/api/news.js';
-import { reactive, ref, onMounted } from '@vue/composition-api';
+import { addFirstCategory, deleteCategory, editCategory, addChildrenCategory } from '@/api/news.js';
+import { reactive, ref, onMounted, watch } from '@vue/composition-api';
 import { globalConfirm } from '../../utils/globalConfirm';
+import { common } from '@/utils/common.js';
 export default {
   setup(props, { root }) {
+    // api
+    const { getInfoCategoryAll, categoryItems } = common();
     /**
      * 分类树形列表信息
      */
@@ -76,18 +86,24 @@ export default {
       data: [],
       current: {}
     });
+    watch(
+      () => categoryItems.items,
+      newValue => {
+        category_info.data = newValue;
+      }
+    );
     // 生命周期钩子，dom挂载完执行
     onMounted(() => {
       // 获取分类树形列表信息
-      getInfoList({}).then(response => {
-        // console.log(response);
-        category_info.data = response.data;
-      });
+      getInfoCategoryAll();
     });
     // 编辑一级分类
     const edit_first_class = params => {
-      disabled_states(false); // 改变表单的禁用状态
-      console.log();
+      // 改变表单的禁用状态
+      first_class_disabled.value = false;
+      second_class_disabled.value = true;
+      determine_btn_disabled.value = false;
+      second_class_hide.value = false;
       form_data.firstValue = params.categoryItem.category_name;
       determine_btn_class.value = params.type;
       // 存储当前属性
@@ -121,7 +137,9 @@ export default {
           });
           // 充值表单
           resetForm();
-          disabled_states(true);
+          first_class_disabled.value = true;
+          second_class_disabled.value = true;
+          determine_btn_disabled.value = true;
           determine_btn_loading.value = false;
         })
         .catch(error => {
@@ -165,19 +183,19 @@ export default {
     const first_class_disabled = ref(true);
     const second_class_disabled = ref(true);
     const determine_btn_disabled = ref(true);
-    const disabled_states = bool => {
-      first_class_disabled.value = bool;
-      second_class_disabled.value = bool;
-      determine_btn_disabled.value = bool;
-    };
+    const second_class_hide = ref(false);
     const form_data = reactive({
       firstValue: '',
       secondValue: ''
     });
     // 添加一级分类
     const add_first_class = params => {
+      resetForm();
       determine_btn_class.value = params.type;
-      disabled_states(false); // 改变表单的禁用状态
+      // 改变表单的禁用状态
+      first_class_disabled.value = false;
+      determine_btn_disabled.value = false;
+      second_class_hide.value = false;
     };
     // 确认添加
     const determine_btn_loading = ref(false); // btn状态
@@ -188,6 +206,9 @@ export default {
           break;
         case 'edit_first_class':
           modify_category();
+          break;
+        case 'add_SecondLevel_category':
+          add_children_category();
           break;
         default:
           break;
@@ -223,6 +244,47 @@ export default {
           return error;
         });
     };
+    /**
+     *  添加二级分类
+     */
+    const add_SecondLevel_category = params => {
+      determine_btn_class.value = params.type;
+      category_info.current = params.categoryItem;
+      form_data.firstValue = params.categoryItem.category_name;
+      first_class_disabled.value = true;
+      second_class_disabled.value = false;
+      second_class_hide.value = true;
+      determine_btn_disabled.value = false;
+    };
+    // 二级分类
+    const add_children_category = () => {
+      if (!form_data.secondValue) {
+        root.$message({
+          message: '不能为空！',
+          type: 'warning'
+        });
+        return false;
+      }
+      determine_btn_loading.value = true; // btn状态
+      let requestDate = {
+        categoryName: form_data.secondValue,
+        parentId: category_info.current.id
+      };
+      addChildrenCategory(requestDate)
+        .then(response => {
+          root.$message({
+            message: response.message,
+            type: 'success'
+          });
+          determine_btn_loading.value = false;
+          form_data.secondValue = ''; // 清空
+          getInfoCategoryAll(); //添加成功掉接口
+        })
+        .catch(error => {
+          determine_btn_loading.value = false;
+          console.log(error);
+        });
+    };
     // 重置表单方法
     const resetForm = () => {
       form_data.firstValue = '';
@@ -233,12 +295,14 @@ export default {
       first_class_disabled,
       second_class_disabled,
       determine_btn_disabled,
+      second_class_hide,
       add_first_class,
       submit_btn,
       determine_btn_loading,
       category_info,
       del_category,
-      edit_first_class
+      edit_first_class,
+      add_SecondLevel_category
     };
   }
 };

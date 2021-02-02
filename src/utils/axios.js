@@ -32,7 +32,7 @@ server.interceptors.response.use(
     // rescode不等于0抛出错误
     if (data.resCode !== 0) {
       Message.error(data.message);
-      Promise.reject(data);
+      return Promise.reject(data);
     } else {
       return response;
     }

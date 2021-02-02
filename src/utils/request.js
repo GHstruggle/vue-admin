@@ -15,10 +15,12 @@ export function request(url, method, data) {
         data
       })
       .then(res => {
+        // console.log('request成功', res);
         resolve(res.data);
       })
       .catch(error => {
-        reject(error.data);
+        // console.log('request失败', error);
+        reject(error);
       });
   });
 }
