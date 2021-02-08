@@ -63,14 +63,15 @@
     <div class="padding-bottom-30"></div>
     <el-table :data="tableData.item" @selection-change="handleSelectionChange" v-loading="loading" border style="width: 100%">
       <el-table-column type="selection"></el-table-column>
-      <el-table-column align="center" prop="title" label="标题"></el-table-column>
+      <el-table-column align="center" prop="title" label="标题" width="300"></el-table-column>
       <el-table-column align="center" prop="categoryId" :formatter="toCategory" label="类别"></el-table-column>
-      <el-table-column align="center" prop="createDate" :formatter="toDate" label="日期"></el-table-column>
+      <el-table-column align="center" prop="createDate" width="180" :formatter="toDate" label="日期"></el-table-column>
       <el-table-column align="center" prop="name" label="管理人"></el-table-column>
-      <el-table-column align="center" prop="" label="操作">
+      <el-table-column align="center" prop="" label="操作" width="300">
         <template slot-scope="scope">
           <el-button type="danger" size="small" @click="info_delete(scope.row)">删除</el-button>
           <el-button type="success" size="small" @click="edit_info(scope.row)">编辑</el-button>
+          <el-button type="primary" size="small" @click="edit_detail(scope.row)">编辑详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -304,6 +305,20 @@ export default {
       type.type = 'edit';
       type.title = '编辑';
     };
+    // 编辑详情
+    const edit_detail = params => {
+      console.log(params);
+      // root.$router.push({
+      //   name: 'infoDetail',
+      //   query: params
+      // });
+      root.$router.push({
+        name: `infoDetail`,
+        query: {
+          id: params.id
+        }
+      });
+    };
     /**
      *  生命周期钩子
      */
@@ -333,6 +348,7 @@ export default {
       info_delete,
       delete_select,
       edit_info,
+      edit_detail,
       handleSelectionChange,
       GetList,
       edit_data,
