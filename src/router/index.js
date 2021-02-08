@@ -74,6 +74,15 @@ const routes = [
           name: '信息分类'
         },
         component: () => import('../views/Info/InfoCategory')
+      },
+      {
+        path: '/infoDetail',
+        name: 'infoDetail',
+        mate: {
+          name: '信息详情',
+          hide: true // 过滤当前路由显示
+        },
+        component: () => import('../views/Info/infoDetail')
       }
     ]
   },

@@ -12,7 +12,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 #main-wrap {
-  // position: fixed;
+  // position: fixed123;
   // left: 280px;
   // top: 105px;
   width: 100%;

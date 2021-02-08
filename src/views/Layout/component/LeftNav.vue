@@ -16,9 +16,11 @@
             <svg-icon :iconClass="routeItemi.mate.icon" :className="routeItemi.mate.icon" />
             <span>{{ routeItemi.mate.name }}</span>
           </template>
-          <el-menu-item :index="subItem.path" v-for="subItem in routeItemi.children" :key="subItem.id">
-            {{ subItem.mate.name }}
-          </el-menu-item>
+          <template v-for="subItem in routeItemi.children">
+            <el-menu-item v-if="!subItem.mate.hide" :index="subItem.path" :key="subItem.id">
+              {{ subItem.mate.name }}
+            </el-menu-item>
+          </template>
         </el-submenu>
       </template>
     </el-menu>
