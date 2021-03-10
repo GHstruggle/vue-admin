@@ -235,7 +235,11 @@ export default {
     const toCategory = row => {
       let categoryId = row.categoryId;
       // console.log(category_options.item);
+      // if (category_options.item.length === 0) {
+      //   return false;
+      // }
       let categoryDate = category_options.item.filter(item => item.id == categoryId)[0];
+      if (!categoryDate) return false;
       let categoryName = categoryDate.category_name;
       return categoryName;
     };

@@ -131,7 +131,7 @@ export default {
           });
           addSubmitLoading.value = false;
           emit('addList', requestData);
-          close();
+          resetForm();
         })
         .catch(error => {
           addSubmitLoading.value = false;

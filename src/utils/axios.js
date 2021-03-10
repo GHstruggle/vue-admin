@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
 import { getToken, getUserName } from './cookies';
-const BASEURL = process.env.NODE_ENV == 'development' ? '/devAPI' : '';
+const BASEURL = process.env.NODE_ENV == 'development' ? '/devAPI' : '/productapi';
 
 // 自定义配置新建一个 axios 实例
 const server = axios.create({

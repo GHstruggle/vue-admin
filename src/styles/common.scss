@@ -31,3 +31,22 @@ $mainColor: #f56c6c;
     margin-left: $i + px;
   }
 }
+
+@for $i from 1 to 50 {
+  .padding-bottom-#{$i}
+  {
+    padding-bottom: $i + px;
+  }
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+.display_none {
+  display: none;
+}
+.validator_text {
+  position: absolute;
+  display: block;
+  color: red;
+}

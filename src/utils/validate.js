@@ -13,3 +13,10 @@ export function validate_passWord(value) {
   let reg = /^(?=.*\d)(?=.*[a-zA-Z]).{6,20}$/;
   return !reg.test(value);
 }
+/**
+ * 手机号验证
+ */
+export function validate_phone(value) {
+  let reg = /^1[3|4|5|7|8][0-9]{9}$/;
+  return !reg.test(value);
+}
