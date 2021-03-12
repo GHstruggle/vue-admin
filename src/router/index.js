@@ -2,8 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
-
-const routes = [
+export const defaultRoute = [
   {
     path: '/',
     redirect: 'login',
@@ -47,6 +46,29 @@ const routes = [
       }
     ]
   },
+  // 404
+  {
+    path: '/404',
+    hide: true, // 过滤当前路由显示
+    mate: {
+      name: '404',
+      icon: 'console'
+    },
+    component: () => import('../views/console/console.vue'),
+    children: [
+      {
+        path: '/404',
+        mate: {
+          name: '404'
+        },
+        component: () => import('@/404.vue')
+      }
+    ]
+  }
+];
+const routes = [...defaultRoute];
+
+export const dynamicRoute = [
   /**
    * 信息管理
    */
@@ -55,7 +77,8 @@ const routes = [
     name: 'info',
     mate: {
       name: '信息管理',
-      icon: 'info'
+      icon: 'info',
+      system: 'infoSystem'
     },
     component: () => import('../views/console/console.vue'),
     children: [
@@ -94,7 +117,8 @@ const routes = [
     name: 'userAdminister',
     mate: {
       name: '用户管理',
-      icon: 'user'
+      icon: 'user',
+      system: 'userSystem'
     },
     component: () => import('../views/console/console.vue'),
     children: [
@@ -107,7 +131,8 @@ const routes = [
         component: () => import('../views/UserAdminister/AdministerList')
       }
     ]
-  }
+  },
+  { path: '*', redirect: '/404', hide: true }
 ];
 
 const router = new VueRouter({

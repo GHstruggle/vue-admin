@@ -12,6 +12,14 @@ export function register(data) {
 export function login(data) {
   return request('/login/', 'post', data);
 }
+// 退出
+export function logout(data = {}) {
+  return request('/logout/', 'post', data);
+}
+// 用户角色
+export function userRole(data = {}) {
+  return request('/userRole/', 'post', data);
+}
 // import server from '@/utils/axios.js';
 
 // 获取验证码

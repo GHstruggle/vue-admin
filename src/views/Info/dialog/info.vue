@@ -57,14 +57,10 @@ export default {
       new_add.value = false;
       // 通过修饰器的方式修改
       emit('update:flag', false);
-      // emit('close_dialog', false);
       // 关闭重置表单
       resetForm();
+      resetFormData();
     };
-    /**
-     *  监听父组件传值
-     */
-    // watch(() => (new_add.value = props.flag));
     watch(
       () => props.flag,
       newValue => {
@@ -84,6 +80,12 @@ export default {
     const formLabelWidth = ref('58px');
     const resetForm = () => {
       refs.ruleForm.resetFields();
+    };
+    const resetFormData = () => {
+      form.selectItems = [];
+      form.options = '';
+      form.title = '';
+      form.content = '';
     };
     const open = () => {
       form.selectItems = props.category_options;
@@ -131,7 +133,7 @@ export default {
           });
           addSubmitLoading.value = false;
           emit('addList', requestData);
-          resetForm();
+          close();
         })
         .catch(error => {
           addSubmitLoading.value = false;
@@ -152,6 +154,8 @@ export default {
             type: 'success'
           });
           addSubmitLoading.value = false;
+          emit('GetList');
+          close();
         })
         .catch(error => {
           root.$message({

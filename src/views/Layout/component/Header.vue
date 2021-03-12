@@ -26,8 +26,14 @@ export default {
     const exit = () => {
       let r = ref(confirm('确认退出吗？'));
       if (r.value) {
-        root.$store.dispatch('login/exit').then(() => {
-          root.$router.push('login');
+        root.$store.dispatch('login/exit').then(res => {
+          if (res.resCode == 0) {
+            root.$message({
+              message: res.message,
+              type: 'success'
+            });
+            root.$router.push('login');
+          }
         });
       }
     };

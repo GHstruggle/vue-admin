@@ -28,7 +28,7 @@ export function getCityPicker(data) {
  * 获取角色
  */
 export function getRole(data = {}) {
-  return request('/system/', 'post', data);
+  return request('/role/', 'post', data);
 }
 /**
  * 删除用户
@@ -41,4 +41,10 @@ export function deleteUser(data) {
  */
 export function actives(data) {
   return request('/user/actives/', 'post', data);
+}
+/**
+ * 按钮权限
+ */
+export function getPermButton(data = {}) {
+  return request('/permButton/', 'post', data);
 }

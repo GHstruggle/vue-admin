@@ -21,10 +21,13 @@ export function loadData() {
           // data.tableData.push(responseData.data);
           tableData.items = responseData.data;
           tableData.total = responseData.total;
-          tableData.loading = false;
         }
+        tableData.loading = false;
       })
-      .catch(error => error);
+      .catch(error => {
+        tableData.loading = false;
+        return error;
+      });
   };
   return {
     tableData,

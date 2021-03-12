@@ -1,4 +1,4 @@
-import { login } from '@/api/login.js';
+import { login, logout } from '@/api/login.js';
 import { SET_TOKEN, SET_USERNAME } from './mutations-type';
 import { setToken, setUserName, removetoKen, removeUserName } from '../../../utils/cookies';
 export default {
@@ -23,11 +23,13 @@ export default {
    */
   async exit({ commit }) {
     return new Promise(resolve => {
-      removetoKen();
-      removeUserName();
-      commit(SET_TOKEN, '');
-      commit(SET_USERNAME, '');
-      resolve();
+      logout().then(res => {
+        removetoKen();
+        removeUserName();
+        commit(SET_TOKEN, '');
+        commit(SET_USERNAME, '');
+        resolve(res);
+      });
     }).catch(error => error);
   }
 };

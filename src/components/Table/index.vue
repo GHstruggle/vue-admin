@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table
-      v-loading="loadingStatus.loading"
+      v-loading="loadingStatus"
       :data="tableData.items"
       border
       @selection-change="TableComponentChange"
@@ -50,7 +50,7 @@
   </div>
 </template>
 <script>
-import { reactive, onBeforeMount, watch } from '@vue/composition-api';
+import { reactive, onBeforeMount, watch, ref } from '@vue/composition-api';
 import { loadData } from './TableDataload';
 import { paginationHook } from './pagination.js';
 export default {
@@ -68,10 +68,11 @@ export default {
   setup(props, { emit }) {
     const { tableData, tableDataLoad } = loadData();
     const { pageData, handleSizeChange, handleCurrentChange, totalCount } = paginationHook();
+    const loadingStatus = ref(true);
     const data = reactive({
-      loadingStatus: {
-        loading: true
-      },
+      // loadingStatus: {
+      //   loading: true
+      // },
       // 父组件传值
       tableConfig: {
         selection: false,
@@ -90,7 +91,8 @@ export default {
      */
     watch([() => tableData.items, () => tableData.total, () => tableData.loading], ([tableData, total, loading]) => {
       data.tableData.items = tableData;
-      data.loadingStatus.loading = loading;
+      loadingStatus.value = loading;
+      console.log('loading', loading);
       totalCount(total);
     });
     // 分页
@@ -150,7 +152,8 @@ export default {
       pageData,
       TableComponentChange,
       refreshData,
-      search_redresh
+      search_redresh,
+      loadingStatus
     };
   }
 };

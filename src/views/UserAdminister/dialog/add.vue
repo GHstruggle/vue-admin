@@ -26,6 +26,18 @@
             <el-checkbox v-for="item in roleItems" :key="item.role" :label="item.role">{{ item.name }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
+        <el-form-item label="按钮权限" prop="btnPerm">
+          <template v-if="btnPerm && btnPerm.length > 0">
+            <div v-for="item in btnPerm" :key="item.name">
+              <h4>{{ item.name }}</h4>
+              <template v-if="item && item.perm.length > 0">
+                <el-checkbox-group v-model="ruleForm.btnPerm">
+                  <el-checkbox v-for="item in item.perm" :key="item.role" :label="item.value">{{ item.name }}</el-checkbox>
+                </el-checkbox-group>
+              </template>
+            </div>
+          </template>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
@@ -38,7 +50,7 @@
 import CityPicker from '@/components/CityPicker/index';
 import { watch, reactive, toRefs } from '@vue/composition-api';
 import { validate_userEmail, validate_passWord, validate_phone } from '@/utils/validate.js';
-import { getRole, addUser, userEdit } from '@/api/user';
+import { getRole, addUser, userEdit, getPermButton } from '@/api/user';
 import { encryption } from '@/utils/encryption';
 export default {
   components: { CityPicker },
@@ -98,7 +110,8 @@ export default {
       phone: '',
       region: '',
       status: '1',
-      role: []
+      role: [],
+      btnPerm: []
     });
     const rules = reactive({
       username: [{ required: true, validator: validateUsername, trigger: 'blur' }],
@@ -117,7 +130,8 @@ export default {
       formLabelWidth: '70px',
       // 地区
       cityPickerData: {},
-      roleItems: []
+      roleItems: [],
+      btnPerm: []
     });
     /**
      *  监听
@@ -147,6 +161,13 @@ export default {
           data.roleItems = response.data;
         })
         .catch(error => error);
+      // 按钮
+      getPermButton()
+        .then(response => {
+          console.log(response);
+          data.btnPerm = response.data;
+        })
+        .catch(error => error);
     };
     const opened = () => {
       getUserRole();
@@ -155,6 +176,7 @@ export default {
       if (type == 'edit') {
         let editData = props.editData;
         editData.role = editData.role ? editData.role.split(',') : [];
+        editData.btnPerm = editData.btnPerm ? editData.btnPerm.split(',') : [];
         for (const key in editData) {
           ruleForm[key] = editData[key];
         }
@@ -170,6 +192,7 @@ export default {
           let requestData = Object.assign({}, ruleForm);
           requestData.region = JSON.stringify(data.cityPickerData);
           requestData.role = requestData.role.join(',');
+          requestData.btnPerm = requestData.btnPerm.join(',');
           if (requestData.id) {
             if (requestData.password) {
               requestData.password = encryption(ruleForm.password);
@@ -198,7 +221,7 @@ export default {
             type: 'success'
           });
           resetForm();
-          data.new_add = false;
+          emit('update:flag', false);
           emit('refreshTableData');
         })
         .catch(error => {
@@ -216,7 +239,7 @@ export default {
             type: 'success'
           });
           resetForm();
-          data.new_add = false;
+          emit('update:flag', false);
           emit('refreshTableData');
         })
         .catch(error => error);

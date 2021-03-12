@@ -69,8 +69,8 @@
       <el-table-column align="center" prop="name" label="管理人"></el-table-column>
       <el-table-column align="center" prop="" label="操作" width="300">
         <template slot-scope="scope">
-          <el-button type="danger" size="small" @click="info_delete(scope.row)">删除</el-button>
-          <el-button type="success" size="small" @click="edit_info(scope.row)">编辑</el-button>
+          <el-button type="danger" size="small" @click="info_delete(scope.row)" v-if="buttonPerm('info.delete')">删除</el-button>
+          <el-button type="success" size="small" @click="edit_info(scope.row)" v-if="buttonPerm('info.edit')">编辑</el-button>
           <el-button type="primary" size="small" @click="edit_detail(scope.row)">编辑详情</el-button>
         </template>
       </el-table-column>
@@ -104,6 +104,7 @@
       :edit_data="edit_data"
       :category_options="category_options.item"
       :flag.sync="new_add"
+      @GetList="GetList"
     />
   </div>
 </template>

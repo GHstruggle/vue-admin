@@ -125,7 +125,7 @@ export default {
             type: 'success'
           });
           // 登录成功跳转主页
-          context.root.$router.push('console');
+          context.root.$router.push('console').catch(() => {});
         })
         .catch(error => error);
     };
@@ -187,7 +187,15 @@ export default {
             type: 'success'
           });
         }) // 错误处理
-        .catch(error => error);
+        .catch(error => {
+          // 开启定时器
+          countDown(10);
+          context.root.$message({
+            message: '发送失败',
+            type: 'error'
+          });
+          return error;
+        });
     };
     // 定时器
     const countDown = number => {

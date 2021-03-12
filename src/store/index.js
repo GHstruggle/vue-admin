@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import meuns from './modules/menus/index';
 import login from './modules/login/index';
+import dynamicRoute from './modules/dynamicRoute/index';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
@@ -24,7 +25,8 @@ const store = new Vuex.Store({
   getters: {},
   modules: {
     meuns,
-    login
+    login,
+    dynamicRoute
   }
 });
 export default store;

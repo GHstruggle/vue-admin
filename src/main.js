@@ -7,6 +7,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 import VueCompositionApi from '@vue/composition-api';
 import '@/icons/index.js';
 import '@/router/routerGuard.js';
+import { buttonPerm } from '@/utils/buttonPerm';
+Vue.prototype.buttonPerm = buttonPerm;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.use(VueCompositionApi);

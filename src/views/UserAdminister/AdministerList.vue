@@ -188,6 +188,7 @@ export default {
     };
     // 编辑
     const btnEdit = params => {
+      console.log('编辑');
       data.isAddOrEdit = 'edit';
       new_add.value = true;
       data.editData = Object.assign({}, params);

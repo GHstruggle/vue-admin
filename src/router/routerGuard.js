@@ -14,7 +14,26 @@ router.beforeEach((to, from, next) => {
       store.commit('login/SET_USERNAME', '');
       next();
     } else {
-      next();
+      // 动态路由分配
+      if (store.getters['dynamicRoute/roles'].length === 0) {
+        store.dispatch('dynamicRoute/getRoles').then(respones => {
+          let role = respones.data.role;
+          let button = respones.data.button; //按钮权限
+          store.commit('dynamicRoute/SET_BUTTONPERM', button);
+          console.log(respones);
+          store.dispatch('dynamicRoute/createRouter', role).then(() => {
+            let addRouters = store.getters['dynamicRoute/addRouters'];
+            let allRouters = store.getters['dynamicRoute/allRouters'];
+            // 添加动态路由
+            router.addRoutes(addRouters);
+            // 路由更新
+            router.options.routes = allRouters;
+            next({ ...to, replace: true });
+          });
+        });
+      } else {
+        next();
+      }
     }
   } else {
     // token不存在
